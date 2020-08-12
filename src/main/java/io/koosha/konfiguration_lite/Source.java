@@ -35,6 +35,12 @@ public abstract class Source implements Konfiguration {
     }
 
     @Override
+    public final Boolean bool(@NotNull final String key,
+                              final Boolean def) {
+        return this.has(key, Kind.of(boolean.class).withKey(key)) ? bool(key) : def;
+    }
+
+    @Override
     public final Character char_(@NotNull final String key) {
         Objects.requireNonNull(key, "key");
 
@@ -67,6 +73,19 @@ public abstract class Source implements Konfiguration {
     }
 
     @Override
+    public final Character char_(@NotNull final String key,
+                                 final Character def) {
+        return this.has(key, Kind.of(char.class).withKey(key)) ? char_(key) : def;
+    }
+
+
+    @Override
+    public final Byte byte_(@NotNull final String key,
+                            final Byte def) {
+        return this.has(key, Kind.of(byte.class).withKey(key)) ? byte_(key) : def;
+    }
+
+    @Override
     public final String string(@NotNull final String key) {
         Objects.requireNonNull(key, "key");
 
@@ -90,6 +109,13 @@ public abstract class Source implements Konfiguration {
 
         return vv;
     }
+
+    @Override
+    public final String string(@NotNull final String key,
+                               final String def) {
+        return this.has(key, Kind.of(String.class).withKey(key)) ? string(key) : def;
+    }
+
 
     @Override
     public final Byte byte_(@NotNull final String key) {
@@ -134,6 +160,12 @@ public abstract class Source implements Konfiguration {
     }
 
     @Override
+    public final Short short_(@NotNull final String key,
+                              final Short def) {
+        return this.has(key, Kind.of(short.class).withKey(key)) ? short_(key) : def;
+    }
+
+    @Override
     public final Integer int_(@NotNull final String key) {
         Objects.requireNonNull(key, "key");
 
@@ -152,6 +184,12 @@ public abstract class Source implements Konfiguration {
             throw new KfgTypeException(this.name(), key, kind, v);
 
         return vv.intValue();
+    }
+
+    @Override
+    public final Integer int_(@NotNull final String key,
+                              final Integer def) {
+        return this.has(key, Kind.of(int.class).withKey(key)) ? int_(key) : def;
     }
 
     @Override
@@ -176,6 +214,12 @@ public abstract class Source implements Konfiguration {
     }
 
     @Override
+    public final Long long_(@NotNull final String key,
+                            final Long def) {
+        return this.has(key, Kind.of(long.class).withKey(key)) ? long_(key) : def;
+    }
+
+    @Override
     public final Float float_(@NotNull final String key) {
         Objects.requireNonNull(key, "key");
 
@@ -194,6 +238,12 @@ public abstract class Source implements Konfiguration {
             throw new KfgTypeException(this.name(), key, kind, v);
 
         return vv;
+    }
+
+    @Override
+    public final Float float_(@NotNull final String key,
+                              final Float def) {
+        return this.has(key, Kind.of(float.class).withKey(key)) ? float_(key) : def;
     }
 
     @Override
@@ -218,14 +268,18 @@ public abstract class Source implements Konfiguration {
     }
 
     @Override
+    public final Double double_(@NotNull final String key,
+                                final Double def) {
+        return this.has(key, Kind.of(double.class).withKey(key)) ? double_(key) : def;
+    }
+
+    @Override
     public final <U> List<U> list(@NotNull final String key,
                                   @NotNull final Kind<U> type) {
         Objects.requireNonNull(key, "key");
 
         if (!this.has(key, type.asList()))
             throw new KfgMissingKeyException(this.name(), key, type);
-
-        final Kind<List<U>> listKind = type.asList();
 
         if (this.isNull(key))
             return null;
@@ -240,14 +294,19 @@ public abstract class Source implements Konfiguration {
     }
 
     @Override
+    public final <U> List<U> list(@NotNull final String key,
+                                  @NotNull final Kind<U> type,
+                                  final List<U> def) {
+        return this.has(key, type.withKey(key)) ? list(key, type) : def;
+    }
+
+    @Override
     public final <U> Set<U> set(@NotNull final String key,
                                 @NotNull final Kind<U> type) {
         Objects.requireNonNull(key, "key");
 
         if (!this.has(key, type.asSet()))
             throw new KfgMissingKeyException(this.name(), key, type);
-
-        final Kind<Set<U>> setKind = type.asSet();
 
         if (this.isNull(key))
             return null;
@@ -269,9 +328,17 @@ public abstract class Source implements Konfiguration {
         return vvv;
     }
 
+    @Override
+    public final <U> Set<U> set(@NotNull final String key,
+                                @NotNull final Kind<U> type,
+                                final Set<U> def) {
+        return this.has(key, type.withKey(key)) ? set(key, type) : def;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
-    public final <U> U custom(@NotNull final String key, @NotNull final Kind<U> type) {
+    public final <U> U custom(@NotNull final String key,
+                              @NotNull final Kind<U> type) {
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(type, "type");
 
@@ -309,6 +376,14 @@ public abstract class Source implements Konfiguration {
         return (U) this.custom0(key, type);
     }
 
+    @Override
+    public final <U> U custom(@NotNull final String key,
+                              @NotNull final Kind<U> type,
+                              final U def) {
+        return has(key, type.withKey(key)) ? custom(key, type) : def;
+    }
+
+
     // =========================================================================
 
     protected abstract boolean isNull(@NotNull String key);
@@ -329,13 +404,16 @@ public abstract class Source implements Konfiguration {
     protected abstract Number numberDouble0(@NotNull final String key);
 
     @NotNull
-    protected abstract List<?> list0(@NotNull String key, @NotNull Kind<?> type);
+    protected abstract List<?> list0(@NotNull String key,
+                                     @NotNull Kind<?> type);
 
     @NotNull
-    protected abstract Set<?> set0(@NotNull final String key, @NotNull Kind<?> type);
+    protected abstract Set<?> set0(@NotNull final String key,
+                                   @NotNull Kind<?> type);
 
     @NotNull
-    protected abstract Object custom0(@NotNull String key, @NotNull Kind<?> type);
+    protected abstract Object custom0(@NotNull String key,
+                                      @NotNull Kind<?> type);
 
 
     // =========================================================================
@@ -389,7 +467,9 @@ public abstract class Source implements Konfiguration {
     @Contract(pure = true,
               value = "null, _, _ -> null")
     @Nullable
-    private static Long toIntegral(@Nullable final Number o, final long min, final long max) {
+    private static Long toIntegral(@Nullable final Number o,
+                                   final long min,
+                                   final long max) {
         if (o == null || o instanceof Double || o instanceof Float)
             return null;
 
@@ -432,7 +512,9 @@ public abstract class Source implements Konfiguration {
      * @throws KfgTypeException if the requested type does not match the type
      *                          of value in the given in.
      */
-    private void checkCollectionType(@NotNull final String key, @NotNull final Kind<?> neededType, @NotNull final Object value) {
+    private void checkCollectionType(@NotNull final String key,
+                                     @NotNull final Kind<?> neededType,
+                                     @NotNull final Object value) {
         Objects.requireNonNull(neededType, "neededType");
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(value, "value");

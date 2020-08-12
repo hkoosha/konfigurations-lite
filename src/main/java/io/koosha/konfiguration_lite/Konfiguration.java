@@ -10,8 +10,6 @@ import java.util.Set;
 
 /**
  * All methods are thread-safe (and should be implemented as such).
- * <p>
- * Entry point to this library is at {@link KonfigurationFactory#getInstanceV8()}.
  */
 @SuppressWarnings("unused")
 @ThreadSafe
@@ -25,11 +23,8 @@ public interface Konfiguration {
      */
     Boolean bool(@NotNull String key);
 
-    default Boolean bool(@NotNull final String key,
-                         final Boolean def) {
-        return this.has(key, Kind.of(boolean.class).withKey(key)) ? bool(key) : def;
-    }
-
+    Boolean bool(@NotNull String key,
+                 Boolean def);
 
     /**
      * Get a byte konfiguration value.
@@ -39,10 +34,8 @@ public interface Konfiguration {
      */
     Byte byte_(@NotNull String key);
 
-    default Byte byte_(@NotNull final String key,
-                       final Byte def) {
-        return this.has(key, Kind.of(byte.class).withKey(key)) ? byte_(key) : def;
-    }
+    Byte byte_(@NotNull String key,
+               Byte def);
 
     /**
      * Get a char konfiguration value.
@@ -52,10 +45,8 @@ public interface Konfiguration {
      */
     Character char_(@NotNull String key);
 
-    default Character char_(@NotNull final String key,
-                            final Character def) {
-        return this.has(key, Kind.of(char.class).withKey(key)) ? char_(key) : def;
-    }
+    Character char_(@NotNull String key,
+                    Character def);
 
     /**
      * Get a short konfiguration value.
@@ -65,10 +56,8 @@ public interface Konfiguration {
      */
     Short short_(@NotNull String key);
 
-    default Short short_(@NotNull final String key,
-                         final Short def) {
-        return this.has(key, Kind.of(short.class).withKey(key)) ? short_(key) : def;
-    }
+    Short short_(@NotNull String key,
+                 Short def);
 
     /**
      * Get an int konfiguration value.
@@ -78,10 +67,8 @@ public interface Konfiguration {
      */
     Integer int_(@NotNull String key);
 
-    default Integer int_(@NotNull final String key,
-                         final Integer def) {
-        return this.has(key, Kind.of(int.class).withKey(key)) ? int_(key) : def;
-    }
+    Integer int_(@NotNull String key,
+                 Integer def);
 
     /**
      * Get a long konfiguration value.
@@ -91,10 +78,8 @@ public interface Konfiguration {
      */
     Long long_(@NotNull String key);
 
-    default Long long_(@NotNull final String key,
-                       final Long def) {
-        return this.has(key, Kind.of(long.class).withKey(key)) ? int_(key) : def;
-    }
+    Long long_(@NotNull String key,
+               Long def);
 
     /**
      * Get a float konfiguration value.
@@ -104,10 +89,8 @@ public interface Konfiguration {
      */
     Float float_(@NotNull String key);
 
-    default Float float_(@NotNull final String key,
-                         final Float def) {
-        return this.has(key, Kind.of(float.class).withKey(key)) ? int_(key) : def;
-    }
+    Float float_(@NotNull String key,
+                 Float def);
 
     /**
      * Get a double konfiguration value.
@@ -117,10 +100,8 @@ public interface Konfiguration {
      */
     Double double_(@NotNull String key);
 
-    default Double double_(@NotNull final String key,
-                           final Double def) {
-        return this.has(key, Kind.of(double.class).withKey(key)) ? int_(key) : def;
-    }
+    Double double_(@NotNull String key,
+                   Double def);
 
     /**
      * Get a string konfiguration value.
@@ -130,10 +111,8 @@ public interface Konfiguration {
      */
     String string(@NotNull String key);
 
-    default String string(@NotNull final String key,
-                          final String def) {
-        return this.has(key, Kind.of(String.class).withKey(key)) ? string(key) : def;
-    }
+    String string(@NotNull final String key,
+                  final String def);
 
     /**
      * Get a list of U konfiguration value.
@@ -146,11 +125,9 @@ public interface Konfiguration {
     <U> List<U> list(@NotNull String key,
                      @NotNull Kind<U> type);
 
-    default <U> List<U> list(@NotNull final String key,
-                             @NotNull final Kind<U> type,
-                             final List<U> def) {
-        return this.has(key, type.withKey(key)) ? list(key, type) : def;
-    }
+    <U> List<U> list(@NotNull String key,
+                     @NotNull Kind<U> type,
+                     List<U> def);
 
     /**
      * Get a set of konfiguration value.
@@ -163,11 +140,9 @@ public interface Konfiguration {
     <U> Set<U> set(@NotNull String key,
                    @NotNull Kind<U> type);
 
-    default <U> Set<U> set(@NotNull final String key,
-                           @NotNull final Kind<U> type,
-                           final Set<U> def) {
-        return this.has(key, type.withKey(key)) ? set(key, type) : def;
-    }
+    <U> Set<U> set(@NotNull String key,
+                   @NotNull Kind<U> type,
+                   Set<U> def);
 
     /**
      * Get a custom object of type Q konfiguration value.
@@ -187,11 +162,9 @@ public interface Konfiguration {
     <U> U custom(@NotNull String key,
                  @NotNull Kind<U> type);
 
-    default <U> U custom(@NotNull String key,
-                         @NotNull Kind<U> type,
-                         final U def) {
-        return has(key, type.withKey(key)) ? custom(key, type) : def;
-    }
+    <U> U custom(@NotNull String key,
+                 @NotNull Kind<U> type,
+                 U def);
 
     // =========================================================================
 

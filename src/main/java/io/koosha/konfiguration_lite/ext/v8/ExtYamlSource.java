@@ -351,7 +351,7 @@ public final class ExtYamlSource extends Source {
         ThreadLocal.withInitial(() -> new Yaml(defaultBaseConstructor));
 
     private final Supplier<Yaml> mapper;
-    @SuppressWarnings("FieldCanBeLocal")
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private final String yaml;
     private final Map<String, ?> root;
 

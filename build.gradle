@@ -1,0 +1,168 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+def isCiServer = System.getenv().containsKey("IS_CI_ENV")
+
+project.ext {
+    my_group = 'io.koosha.konfigurations.lite'
+    my_artifact = 'konfigurations-lite'
+    my_version = '8.0.0'
+    my_name = 'Konfigurations'
+    my_real_name = 'Koosha Hosseiny'
+    my_email = 'i@koosha.io'
+    my_description = 'Simple, small and extendable configuration management library.'
+    my_url = 'https://github.com/hkoosha/konfigurations-lite'
+    my_url_issues = 'https://github.com/hkoosha/konfigurations-lite/issues'
+    my_git = 'scm:git:git://github.com/hkoosha/konfigurations-lite.git'
+    my_git_conn = 'scm:git:git@github.com:hkoosha/konfigurations-lite.git'
+    my_org = 'io.koosha'
+    my_org_url = 'https://koosha.io'
+}
+
+tasks.withType(JavaCompile) {
+    options.fork = true
+}
+
+group ext.my_group
+version ext.my_version
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+test {
+    useTestNG()
+}
+
+idea {
+    module {
+        outputDir = file('build')
+        inheritOutputDirs = true
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+dependencies {
+    compileOnly 'com.fasterxml.jackson.core:jackson-core:2.11.2'
+    compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.11.2'
+    compileOnly 'com.google.code.gson:gson:2.8.6'
+    compileOnly 'org.yaml:snakeyaml:1.26'
+
+    compileOnly 'org.jetbrains:annotations:20.0.0'
+    compileOnly 'net.jcip:jcip-annotations:1.0'
+
+    testImplementation 'org.jetbrains:annotations:19.0.0'
+    testImplementation 'net.jcip:jcip-annotations:1.0'
+    testImplementation 'com.fasterxml.jackson.core:jackson-core:2.11.2'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.11.2'
+    testImplementation 'com.google.code.gson:gson:2.8.6'
+    testImplementation 'org.yaml:snakeyaml:1.26'
+    testImplementation 'org.testng:testng:7.3.0'
+    testImplementation 'org.slf4j:slf4j-api:1.7.30'
+    testImplementation 'org.slf4j:slf4j-simple:1.7.30'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task allJar(type: Jar, dependsOn: [sourcesJar, javadocJar, jar]) {
+    classifier = 'everything'
+    from sourceSets.main.allSource
+    from javadoc.destinationDir
+    archiveBaseName = 'allJar'
+    from configurations.archives.artifacts.files.collect {
+        zipTree(it)
+    }
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+    // archives allJar
+}
+
+signing {
+    required {
+      !version.toString().endsWith('-SNAPSHOT') && 
+        tasks.withType(PublishToMavenRepository).find {
+         gradle.taskGraph.hasTask it
+      }
+    }
+    sign configurations.archives
+    sign publishing.publications
+}
+
+publishing {
+    publications {
+        sonata(MavenPublication) {
+            pom {
+                description = project.ext.my_description
+                name = project.ext.my_name
+                url = project.ext.my_url
+                organization {
+                    name = project.ext.my_org
+                    url = project.ext.my_org_url
+                }
+                issueManagement {
+                    system = 'GitHub'
+                    url = project.ext.my_url_issues
+                }
+                licenses {
+                    license {
+                        name = 'Apache License'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                scm {
+                    connection = project.ext.my_git
+                    developerConnection = project.ext.my_git_conn
+                    url = project.ext.my_url
+                }
+                developers {
+                    developer {
+                        url = project.ext.my_org_url
+                        name = project.ext.my_real_name
+                        email = project.ext.my_email
+                    }
+                }
+            }
+            groupId project.ext.my_group
+            artifactId project.ext.my_artifact
+            version project.ext.my_version
+            from components.java
+            artifact sourcesJar {
+                classifier 'sources'
+            }
+            artifact javadocJar {
+                classifier 'javadoc'
+            }
+            repositories {
+                maven {
+                    url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                    if(!isCiServer) {
+                      credentials {
+                          // username sonatypeUsername
+                          // password sonatypePassword
+                          username ''
+                          password ''
+                      }
+                    }
+                }
+            }
+        }
+    }
+}
